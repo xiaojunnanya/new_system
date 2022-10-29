@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<style type="text/css">
+		#textBox{
+			box-shadow: 0 0 100px #000000;
+		}
+	</style>
+</head>
+<body>
+	<input type="text" id="text">
+	<input type="submit" value="send" onclick="send()">
+	<input type="submit" value="模拟报道成功" onclick="sendTest()">
+	<div id="textBox" style="height: 300px;overflow: scroll;">
+		<div id="msg"></div>
+	</div>
+</body>
+<script>
+    var msg = document.getElementById("msg");
+    var str = '{"academic_year":0,"birthday":"20020226","candidate_category":"农村应届","candidate_number":"19130229151191","check_in":"未报到","city":"北京市","college":"信息工程学院","county":"东城区","delay_report_reason":"","detailed_address":"北京市北京市东城区法发发发","eductional_systme":"4","estimated_arrival_time":"2021-08-30","ethnic":"蒙古族","father_name":"","father_phone_number":"","foreign_language":"英语","graduation_category":"普通高中（高中）","household_address":"北京市北京市东城区","idcard":"130229200202267111","middle_school_name":"玉田县第一中学","mother_name":"","mother_phone_number":"","name":"薄皓萱","native_place":"北京市北京市东城区","openid":"http://47.93.183.66:8888/Downloads/qWMK4zdVWnSIa909176cca7af89737fd451997846963.","orgin":"北京市北京市东城区","phone_number":"12312312312","political_landscape":"中共预备党员","poor_address":"","poor_certification":"否","postcode":"131312","professional":"计算机类","province":"北京市","qq":"","sex":"男","the_religion":"否","transportation":"不行","vaccine_certification":"否","vaccine_manufacturer_1":"","vaccine_manufacturer_2":"","vaccine_manufacturer_3":"","vaccine_number":1,"wechat":"","whether_delay_report":"否"}'
+      var wsServer = 'ws://47.93.183.66:8888/webSocket';
+    var websocket = new WebSocket(wsServer);
+    //监听连接打开
+    websocket.onopen = function (evt) {
+        msg.innerHTML = "The connection is open";
+    };
+
+    //监听服务器数据推送
+    websocket.onmessage = function (evt) {
+        msg.innerHTML += "<br>" + evt.data;
+        // console.log(evt.data);
+        if(evt.data!='连接成功')
+        	parse(evt.data)
+    };
+
+    //监听连接关闭
+    websocket.onclose = function (evt) {
+        alert("连接关闭");
+    };
+
+    function send() {
+        var text = document.getElementById("text").value
+        websocket.send(text);
+        scrollTo(0,document.body.scrollHeight)
+    }
+
+    function sendTest() {
+    	websocket.send(str)
+    }
+
+    function parse(msg) {
+    	msg = msg.replace(/\//g, '')
+    	// msg = JSON.stringify(msg)
+    	msg = JSON.parse(msg)
+    	// msg = eval('(' + msg + ')')
+    	console.log(msg)
+    }
+</script>
+</html>
